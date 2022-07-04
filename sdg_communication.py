@@ -2,12 +2,13 @@
 
 import socket
 
-class siglent_communication:
+class sdg_communication:
     """Deals with communication. In hindsight, do I really need a class for this?"""
 
-    def __init__(self,ip,port):
+    def __init__(self,ip,port,timeout=10):
         self._socket = socket.socket()
         self._socket.connect((ip,port))
+        self._socket.settimeout(timeout)
         self._socket.recv(4096) # Eat the connection message.
 
     def send_and_receive(self,message):
@@ -16,17 +17,13 @@ class siglent_communication:
         
     def send(self,message):
         """Send the message, return the socket status."""
-        return self._socket.send(bytes(message)+b"\r\n")
+        return self._socket.send(bytes(message,'utf-8')+b"\r\n")
         
     def receive(self):
         """Bit crude implementation, but it should work."""
 
         _msg = b""
-        while True:
-            if len(_msg) > 0 and _msg[-1] == "\x00":
-                break
-
+        while not (len(_msg)>0 and _msg[-1]==0):
             _msg += self._socket.recv(4096)
-            print(_msg)
 
         return _msg
