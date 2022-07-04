@@ -8,24 +8,25 @@ class siglent_communication:
     def __init__(self,ip,port):
         self._socket = socket.socket()
         self._socket.connect((ip,port))
-        print(self._socket.recv(4096))
+        self._socket.recv(4096) # Eat the connection message.
 
-    def _send_and_receive(self,message):
-        self._send(message)
-        return self._receive()
+    def send_and_receive(self,message):
+        self.send(message)
+        return self.receive()
         
-    def _send(self,message):
+    def send(self,message):
         """Send the message, return the socket status."""
-        return self._socket.send(bytes(message))
+        return self._socket.send(bytes(message)+b"\r\n")
         
-    def _receive(self):
+    def receive(self):
         """Bit crude implementation, but it should work."""
 
         _msg = b""
         while True:
-            if _msg[-1] == "\x00":
+            if len(_msg) > 0 and _msg[-1] == "\x00":
                 break
 
             _msg += self._socket.recv(4096)
+            print(_msg)
 
         return _msg
