@@ -14,8 +14,7 @@ class sdg_settings:
 
         self.reset()
         self.clear_errors()
-        self.set_limits()
-
+        
         self.set_voltage(1,0)
         self.set_voltage(2,0)
 
@@ -42,7 +41,7 @@ class sdg_settings:
             self.output(status,1)
             self.output(status,2)
         else:
-            self._communication.send_and_receive(f"C{ch}:OUTP ON,LOAD,HZ")
+            self._communication.send_and_receive(f"C{ch}:OUTP {command},LOAD,HZ")
 
     def set_voltage(self,ch,voltage):
         if ch not in [1,2]:
