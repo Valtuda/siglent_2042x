@@ -20,6 +20,11 @@ class sdg_settings:
 
         self.output(True)
 
+    def __del__(self):
+        self.set_voltage(1,0)
+        self.set_voltage(1,0)
+        self.output(False)
+
     def reset(self):
         self._communication.send_and_receive("*RST")
 
