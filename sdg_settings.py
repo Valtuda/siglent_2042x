@@ -4,10 +4,12 @@ from .sdg_communication import sdg_communication
 
 class sdg_settings:
     """Exposes some of the settings of the waveform generator."""
-    def __init__(self,ip,port,max_voltage = 5):
+    def __init__(self,ip,port,max_voltage = 5,impedance="HZ"):
         self._max_voltage = max_voltage
 
         self._communication = sdg_communication(ip,port)
+
+        self._impedance = impedance
 
         # Reset doesn't automatically turn off the output, and we don't want to damage anything.
         self.output(False)
@@ -46,7 +48,7 @@ class sdg_settings:
             self.output(status,1)
             self.output(status,2)
         else:
-            self._communication.send_and_receive(f"C{ch}:OUTP {command},LOAD,HZ")
+            self._communication.send_and_receive(f"C{ch}:OUTP {command},LOAD,{self._impedance}")
 
     def set_voltage(self,ch,voltage):
         if ch not in [1,2]:

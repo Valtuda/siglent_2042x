@@ -9,7 +9,10 @@ class sdg_communication:
         self._socket = socket.socket()
         self._socket.connect((ip,port))
         self._socket.settimeout(timeout)
-        self._socket.recv(4096) # Eat the connection message.
+        try:
+            self._socket.recv(4096) # Eat the connection message.
+        except:
+            pass # If there is no message, we might have been previously connected, don't crap out on this.
 
     def send_and_receive(self,message):
         self.send(message)
