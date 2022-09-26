@@ -4,7 +4,10 @@ from .sdg_communication import sdg_communication
 
 class sdg_settings:
     """Exposes some of the settings of the waveform generator."""
-    def __init__(self,ip,port,max_voltage = 5,impedance="HZ"):
+    def __init__(self,ip,port,max_voltage = 5,impedance="50"):
+        if max_voltage > 5:
+            raise ValueError("Max voltage is set above 5, this will damage the device if used with the intended use for this script. Remove this line from the code to continue.")
+
         self._max_voltage = max_voltage
 
         self._communication = sdg_communication(ip,port)
@@ -22,10 +25,11 @@ class sdg_settings:
 
         self.output(True)
 
-    def __del__(self):
-        self.set_voltage(1,0)
-        self.set_voltage(1,0)
+    def __del__(self): 
         self.output(False)
+        self.set_voltage(1,0)
+        self.set_voltage(1,0)
+
 
     def reset(self):
         self._communication.send_and_receive("*RST")
